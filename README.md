@@ -62,7 +62,7 @@ capstone_design/
 |---|---|---|
 | 1 | `whisper_finetuning.ipynb` | Whisper QLoRA fine-tuning on standard + dialect speech |
 | 2 | `llama3_2_fine_tuning.ipynb` | Llama 3.2 SFT for speech-to-command parsing |
-| 3 | `colab_local_communication.ipynb` | load both models, push to the Hub, serve Gradio to the car |
+| 3 | `colab_local_communication.ipynb` | load both models and serve Gradio to the car |
 
 ## Google Drive
 
@@ -79,16 +79,6 @@ MyDrive/capstone_design/
 
 `data/audio_files/` is 256MB and stays out of git — `data/total_whisper.json` references the
 files by name, so drop them into that one flat directory.
-
-## Hugging Face token
-
-The token is read from Colab Secrets, never stored in the source:
-
-```python
-HF_TOKEN = userdata.get('HF_TOKEN')
-```
-
-Add `HF_TOKEN` in the Colab sidebar (🔑) and enable notebook access for it.
 
 ## Hardware
 
