@@ -1,0 +1,6 @@
+data/audio_files/
+outputs/
+__pycache__/
+.ipynb_checkpoints/
+*.pt
+*.safetensors
