@@ -5,3 +5,4 @@ __pycache__/
 *.pt
 *.safetensors
 push_to_hub.ipynb
+*.bak

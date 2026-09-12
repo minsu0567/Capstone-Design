@@ -7,7 +7,7 @@ import requests
 import soundfile as sf
 import whisper
 
-PROMPT = '사용자 입력을 보고, 제어 명령을 생성해주세요. 오직 JSON 객체만 생성하세요. '
+PROMPT = '사용자 입력을 보고, 제어 명령을 생성해주세요. 오직 JSON 객체만 생성하세요.'
 
 TARGET_SAMPLE_RATE = 16000
 

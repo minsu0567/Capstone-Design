@@ -1,3 +1,5 @@
+import json
+
 from datasets import load_dataset
 from trl import SFTConfig, SFTTrainer
 
@@ -57,7 +59,7 @@ def build_formatting_func(tokenizer):
         for instruction, input_text, output in zip(
                 examples['instruct'], examples['input'], examples['output']):
             prompts.append(make_alpaca_prompt(instruction, input_text))
-            completions.append(str(output) + eos_token)
+            completions.append(json.dumps(output, ensure_ascii=False) + eos_token)
         return {'prompt': prompts, 'completion': completions}
 
     return prompt_formatting_func
@@ -130,7 +132,7 @@ def evaluate_model(test_dataset, instruction, model, tokenizer,
         model_response = generate_response(
             full_prompt, model, tokenizer, max_new_tokens=max_new_tokens)
 
-        expected_output = str(example['output'])
+        expected_output = json.dumps(example['output'], ensure_ascii=False)
         model_output = model_response.split('### Response:')[-1].strip()
         is_correct = expected_output == model_output
 

@@ -16,7 +16,7 @@ list that a Jetson Orin Nano executes on the vehicle.
 |---|---|
 | Whisper base | [openai/whisper-large-v3-turbo](https://huggingface.co/openai/whisper-large-v3-turbo) |
 | Whisper — dialect ASR | [minsu0567/Capstone-Design-Whisper-Dialect](https://huggingface.co/minsu0567/Capstone-Design-Whisper-Dialect) |
-| Llama base | [Bllossom/llama-3.2-Korean-Bllossom-3B](https://huggingface.co/Bllossom/llama-3.2-Korean-Bllossom-3B) |
+| Llama 3.2 base | [Bllossom/llama-3.2-Korean-Bllossom-3B](https://huggingface.co/Bllossom/llama-3.2-Korean-Bllossom-3B) |
 | Llama 3.2 — command parsing | [minsu0567/Capstone-Design-Llama3.2-Command](https://huggingface.co/minsu0567/Capstone-Design-Llama3.2-Command) |
 
 Whisper is fine-tuned with QLoRA (4bit NF4, r=16, `q/k/v/out_proj`) and published with the
@@ -39,21 +39,24 @@ The LLM emits `command_id`, `value` and `duration` per command; `-1` means "unse
 
 ```
 capstone_design/
+├── notebooks/                          Colab drivers (see below)
 ├── whisper_src/
 │   ├── whisper_sft.py                  QLoRA fine-tuning, dataset split, WER metric
+│   └── whisper_eval.py                 base vs fine-tuned WER/CER comparison
+├── pipeline_src/
 │   └── voice_command_pipeline.py       transcribe -> command -> HTTP, Gradio interface
 ├── llm_src/
 │   └── llama3_2_sft.py                 Alpaca-format SFT for command parsing
 ├── device_src/
 │   ├── control.py                      Jetson: ODrive motors, PCA9685 servos, video stream
 │   └── local_edge_communication.py     Flask relay between Colab and the Jetson socket
-├── data/
-│   ├── total_whisper.json              1796 ASR samples (standard 687 + dialect 1109)
-│   ├── total_commands.jsonl            command-parsing training set
-│   ├── test.jsonl                      held-out command set
-│   ├── command_lexicon.py              command vocabulary
-│   └── generate_*_commands.py          synthetic command generators
-└── *.ipynb                             Colab drivers
+└── data/
+    ├── total_whisper.json              1796 ASR samples (standard 687 + dialect 1109)
+    ├── total_commands.jsonl            command-parsing training set
+    ├── test.jsonl                      held-out command set (100, no overlap with training)
+    ├── command_lexicon.py              command vocabulary
+    ├── generate_*_commands.py          synthetic command generators
+    └── generate_test_set.py            builds test.jsonl and strips it from training
 ```
 
 ## Notebooks
@@ -61,8 +64,10 @@ capstone_design/
 | # | Notebook | Purpose |
 |---|---|---|
 | 1 | `whisper_finetuning.ipynb` | Whisper QLoRA fine-tuning on standard + dialect speech |
-| 2 | `llama3_2_fine_tuning.ipynb` | Llama 3.2 SFT for speech-to-command parsing |
-| 3 | `colab_local_communication.ipynb` | load both models and serve Gradio to the car |
+| 2 | `whisper_evaluation.ipynb` | base vs fine-tuned WER/CER on held-out dialect audio |
+| 3 | `llama3_2_fine_tuning.ipynb` | Llama 3.2 SFT for speech-to-command parsing |
+| 4 | `llama3_2_evaluation.ipynb` | exact-match accuracy on the held-out command set |
+| 5 | `colab_local_communication.ipynb` | load both models and serve Gradio to the car |
 
 ## Google Drive
 
@@ -76,6 +81,9 @@ MyDrive/capstone_design/
 ├── whisper-dialect-turbo-qlora/checkpoint-1880/ QLoRA adapter
 └── llama3.2-merged/                             merged Llama 3.2
 ```
+
+`whisper_evaluation.ipynb` additionally reads `MyDrive/whisper_test/` (audio plus
+`updated_test_data.json`), which sits next to `capstone_design/`, not inside it.
 
 `data/audio_files/` is 256MB and stays out of git — `data/total_whisper.json` references the
 files by name, so drop them into that one flat directory.

@@ -60,8 +60,7 @@ def speed_setting_examples(num_samples_per_phrase=1):
                     results.append(lex.make_example(
                         pattern.format(value),
                         [{"command_id": "setting",
-                          "value": lex.korean_to_number(value),
-                          "duration": -1}],
+                          "value": lex.korean_to_number(value)}],
                     ))
     return results
 
@@ -72,7 +71,7 @@ def generate_single_command_examples(num_samples_per_phrase=1):
         for _ in range(num_samples_per_phrase):
             results.append(lex.make_example(
                 phrase,
-                [{"command_id": command_id, "value": -1, "duration": -1}],
+                [{"command_id": command_id, "value": -1}],
             ))
     results.extend(speed_setting_examples(num_samples_per_phrase))
     return results
